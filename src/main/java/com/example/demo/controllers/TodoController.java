@@ -1,8 +1,8 @@
 package com.example.demo.controllers;
 
-import com.example.demo.DTO.TodoInsertDTO;
-import com.example.demo.DTO.TodoDTO;
-import com.example.demo.mapper.TodoMapper;
+import com.example.demo.DTO.todo.TodoInsertDTO;
+import com.example.demo.DTO.todo.TodoDTO;
+import com.example.demo.mapper.todo.TodoMapper;
 import com.example.demo.model.Todo;
 import com.example.demo.services.GenericService;
 import org.springframework.http.HttpHeaders;

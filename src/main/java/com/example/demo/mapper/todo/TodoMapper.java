@@ -1,7 +1,7 @@
-package com.example.demo.mapper;
+package com.example.demo.mapper.todo;
 
-import com.example.demo.DTO.TodoInsertDTO;
-import com.example.demo.DTO.TodoDTO;
+import com.example.demo.DTO.todo.TodoInsertDTO;
+import com.example.demo.DTO.todo.TodoDTO;
 import com.example.demo.model.Todo;
 import org.mapstruct.Mapper;
 
