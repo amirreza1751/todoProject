@@ -1,5 +1,8 @@
 package com.example.demo.controllers;
 
+import com.example.demo.DTO.TodoInsertDTO;
+import com.example.demo.DTO.TodoDTO;
+import com.example.demo.mapper.TodoMapper;
 import com.example.demo.model.Todo;
 import com.example.demo.services.TodoService;
 import org.springframework.http.HttpHeaders;
@@ -13,39 +16,36 @@ import java.util.List;
 @RequestMapping("/api/v1/todo")
 public class TodoController {
     TodoService todoService;
+    public TodoMapper mapper;
 
-    public TodoController(TodoService todoService) {
+    public TodoController(TodoService todoService, TodoMapper mapper) {
         this.todoService = todoService;
+        this.mapper = mapper;
     }
 
-    //The function receives a GET request, processes it and gives back a list of Todo as a response.
     @GetMapping
-    public ResponseEntity<List<Todo>> getAllTodos() {
+    public ResponseEntity<List<TodoDTO>> getAllTodos() {
         List<Todo> todos = todoService.getTodos();
-        return new ResponseEntity<>(todos, HttpStatus.OK);
+        return new ResponseEntity<>(mapper.toTodoDTO(todos), HttpStatus.OK);
     }
-    //The function receives a GET request, processes it, and gives back a list of Todo as a response.
     @GetMapping({"/{todoId}"})
-    public ResponseEntity<Todo> getTodo(@PathVariable Long todoId) {
-        return new ResponseEntity<>(todoService.getTodoById(todoId), HttpStatus.OK);
+    public ResponseEntity<TodoDTO> getTodo(@PathVariable Long todoId) {
+        return new ResponseEntity<>(mapper.toTodoDTO(todoService.getTodoById(todoId)), HttpStatus.OK);
     }
-    //The function receives a POST request, processes it, creates a new Todo and saves it to the database, and returns a resource link to the created todo.
     @PostMapping
-    public ResponseEntity<Todo> saveTodo(@RequestBody Todo todo) {
-        Todo todo1 = todoService.insert(todo);
+    public ResponseEntity<TodoDTO> saveTodo(@RequestBody TodoInsertDTO todoInsertDTO) {
+        Todo todo1 = todoService.insert(mapper.toTodo(todoInsertDTO));
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("todo", "/api/v1/todo/" + todo1.getId().toString());
-        return new ResponseEntity<>(todo1, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.toTodoDTO(todo1), httpHeaders, HttpStatus.CREATED);
     }
-    //The function receives a PUT request, updates the Todo with the specified Id and returns the updated Todo
     @PutMapping({"/{todoId}"})
-    public ResponseEntity<Todo> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody Todo todo) {
-        todoService.updateTodo(todoId, todo);
-        return new ResponseEntity<>(todoService.getTodoById(todoId), HttpStatus.OK);
+    public ResponseEntity<TodoDTO> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoInsertDTO todoInsertDTO) {
+        todoService.updateTodo(todoId, mapper.toTodo(todoInsertDTO));
+        return new ResponseEntity<>(mapper.toTodoDTO(todoService.getTodoById(todoId)), HttpStatus.OK);
     }
-    //The function receives a DELETE request, deletes the Todo with the specified Id.
     @DeleteMapping({"/{todoId}"})
-    public ResponseEntity<Todo> deleteTodo(@PathVariable("todoId") Long todoId) {
+    public ResponseEntity<?> deleteTodo(@PathVariable("todoId") Long todoId) {
         todoService.deleteTodo(todoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
