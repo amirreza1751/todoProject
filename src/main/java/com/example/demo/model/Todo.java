@@ -36,6 +36,8 @@ public class Todo {
             joinColumns = @JoinColumn(name = "todo_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     Set<Tag> tagSet;
 
     @ManyToOne

@@ -1,10 +1,8 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -30,6 +28,8 @@ public class Tag {
     Timestamp lastModified;
 
     @ManyToMany(mappedBy = "tagSet")
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
     Set<Todo> todoSet;
 
     @Override

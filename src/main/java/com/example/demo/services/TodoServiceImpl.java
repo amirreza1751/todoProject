@@ -58,16 +58,31 @@ public class TodoServiceImpl implements GenericService<Todo> {
         return todoRepository.saveAll(todos);
     }
 
-    public void assignTags(Long todoId, Long[] tagsIds){
+    public Todo assignTags(Long todoId, Long[] tagIds){
         Todo todo = getEntityById(todoId);
-        ArrayList<Tag> tags = tagService.findAllById(tagsIds);
+        ArrayList<Tag> tags = tagService.findAllById(tagIds);
         if (tags.size()!= 0){
             tags.forEach(tag -> {
                 tag.getTodoSet().add(todo);
             });
             todo.getTagSet().addAll(tags);
             tagService.saveAll(tags);
-            updateEntity(todo.getId(), todo);
+            return todoRepository.save(todo);
         }
+        return todo;
+    }
+
+    public Todo removeTags(Long todoId, Long[] tagIds){
+        Todo todo = getEntityById(todoId);
+        ArrayList<Tag> tags = tagService.findAllById(tagIds);
+        if (tags.size()!= 0){
+            todo.getTagSet().removeAll(tags);
+            tags.forEach(tag -> {
+                tag.getTodoSet().remove(todo);
+            });
+            tagService.saveAll(tags);
+            return todoRepository.save(todo);
+        }
+        return todo;
     }
 }

@@ -35,6 +35,11 @@ public class UsersLoader implements CommandLineRunner {
                             .name("User3")
                             .build()
             );
+            usersRepository.save(
+                    Users.builder()
+                            .name("User4")
+                            .build()
+            );
             System.out.println("Sample Users Loaded");
         }
     }

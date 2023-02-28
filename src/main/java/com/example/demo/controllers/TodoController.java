@@ -2,9 +2,9 @@ package com.example.demo.controllers;
 
 import com.example.demo.DTO.todo.TodoInsertDTO;
 import com.example.demo.DTO.todo.TodoDTO;
+import com.example.demo.DTO.user.UsersDTO;
 import com.example.demo.mapper.todo.TodoMapper;
 import com.example.demo.model.Todo;
-import com.example.demo.services.GenericService;
 import com.example.demo.services.TodoServiceImpl;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpHeaders;
@@ -50,5 +50,15 @@ public class TodoController {
     public ResponseEntity<?> deleteTodo(@PathVariable("todoId") Long todoId) {
         todoService.deleteEntity(todoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @PostMapping({"/{todoId}/assign-tags"})
+    public ResponseEntity<TodoDTO> assignTags(@PathVariable("todoId") Long todoId, @RequestBody Long[] ids) {
+        Todo todo = todoService.assignTags(todoId, ids);
+        return new ResponseEntity<>(mapper.toDTO(todo), HttpStatus.OK);
+    }
+    @PostMapping({"/{todoId}/remove-tags"})
+    public ResponseEntity<TodoDTO> removeTags(@PathVariable("todoId") Long todoId, @RequestBody Long[] ids) {
+        Todo todo = todoService.removeTags(todoId, ids);
+        return new ResponseEntity<>(mapper.toDTO(todo), HttpStatus.OK);
     }
 }
