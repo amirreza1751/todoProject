@@ -31,4 +31,12 @@ public class Tag {
 
     @ManyToMany(mappedBy = "tagSet")
     Set<Todo> todoSet;
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

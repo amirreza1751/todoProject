@@ -34,6 +34,20 @@ public class TodoLoader implements CommandLineRunner {
                             .todoStatus(TodoStatus.NOT_COMPLETED)
                             .build()
             );
+            todoRepository.save(
+                    Todo.builder()
+                            .title("Go to gym")
+                            .description("Leg day")
+                            .todoStatus(TodoStatus.NOT_COMPLETED)
+                            .build()
+            );
+            todoRepository.save(
+                    Todo.builder()
+                            .title("Eat healthy")
+                            .description("Eat salad")
+                            .todoStatus(TodoStatus.NOT_COMPLETED)
+                            .build()
+            );
             System.out.println("Sample Todos Loaded");
         }
     }

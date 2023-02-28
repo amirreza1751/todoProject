@@ -5,6 +5,8 @@ import com.example.demo.DTO.todo.TodoDTO;
 import com.example.demo.mapper.todo.TodoMapper;
 import com.example.demo.model.Todo;
 import com.example.demo.services.GenericService;
+import com.example.demo.services.TodoServiceImpl;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,34 +17,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/todo")
 public class TodoController {
-    GenericService todoService;
-    public TodoMapper mapper;
+    private final TodoServiceImpl todoService;
+    private final TodoMapper mapper;
 
-    public TodoController(GenericService todoService, TodoMapper mapper) {
+    public TodoController(TodoServiceImpl todoService) {
         this.todoService = todoService;
-        this.mapper = mapper;
+        this.mapper = Mappers.getMapper(TodoMapper.class);
     }
 
     @GetMapping
     public ResponseEntity<List<TodoDTO>> getAllTodos() {
         List<Todo> todos = todoService.getEntities();
-        return new ResponseEntity<>(mapper.toTodoDTO(todos), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.toDTO(todos), HttpStatus.OK);
     }
     @GetMapping({"/{todoId}"})
     public ResponseEntity<TodoDTO> getTodo(@PathVariable Long todoId) {
-        return new ResponseEntity<>(mapper.toTodoDTO((Todo) todoService.getEntityById(todoId)), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.toDTO((Todo) todoService.getEntityById(todoId)), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<TodoDTO> saveTodo(@RequestBody TodoInsertDTO todoInsertDTO) {
-        Todo todo1 = (Todo) todoService.insert(mapper.toTodo(todoInsertDTO));
+    public ResponseEntity<TodoDTO> saveTodo(@RequestBody TodoDTO todoDTO) {
+        Todo todo1 = (Todo) todoService.insert(mapper.toEntity(todoDTO));
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("todo", "/api/v1/todo/" + todo1.getId().toString());
-        return new ResponseEntity<>(mapper.toTodoDTO(todo1), httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.toDTO(todo1), httpHeaders, HttpStatus.CREATED);
     }
     @PutMapping({"/{todoId}"})
-    public ResponseEntity<TodoDTO> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoInsertDTO todoInsertDTO) {
-        todoService.updateEntity(todoId, mapper.toTodo(todoInsertDTO));
-        return new ResponseEntity<>(mapper.toTodoDTO((Todo) todoService.getEntityById(todoId)), HttpStatus.OK);
+    public ResponseEntity<TodoDTO> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoDTO todoDTO) {
+        todoService.updateEntity(todoId, mapper.toEntity(todoDTO));
+        return new ResponseEntity<>(mapper.toDTO((Todo) todoService.getEntityById(todoId)), HttpStatus.OK);
     }
     @DeleteMapping({"/{todoId}"})
     public ResponseEntity<?> deleteTodo(@PathVariable("todoId") Long todoId) {

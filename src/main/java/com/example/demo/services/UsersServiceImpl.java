@@ -48,16 +48,38 @@ public class UsersServiceImpl implements GenericService<Users> {
         usersRepository.deleteById(userId);
     }
 
-    public void assignTodos(Long userId, Long[] todoIds){
+    public Users assignTodos(Long userId, Long[] todoIds){
         Users user = getEntityById(userId);
         ArrayList<Todo> todos = todoService.findAllById(todoIds);
         if (todos.size()!= 0){
             todos.forEach(todo -> {
-                todo.setUser(user);
+                if (todo.getUser() == null){
+                    todo.setUser(user);
+                    user.getTodoSet().add(todo);
+                }
             });
-            user.getTodoSet().addAll(todos);
-            usersRepository.save(user);
-            todoService.saveAll(todos);
+            return usersRepository.save(user);
         }
+        return user;
+    }
+
+    public Users removeTodos(Long userId, Long[] todoIds){
+        Users user = getEntityById(userId);
+        ArrayList<Todo> todos = todoService.findAllById(todoIds);
+        if (todos.size()!= 0){
+            if (user.getTodoSet() != null){
+                todos.forEach(todo -> {
+                    if (todo.getUser() != null){
+                        if (todo.getUser().getId() == userId){
+                            todo.setUser(null);
+                            todoService.updateEntity(todo.getId(), todo);
+                            user.getTodoSet().remove(todo);
+                        }
+                    }
+                });
+                return usersRepository.save(user);
+            }
+        }
+        return user;
     }
 }

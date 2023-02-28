@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class UsersMapper {
-    public abstract Users toUsers(UsersDTO usersDTO);
+    public abstract Users toEntity(UsersDTO usersDTO);
     public abstract UsersDTO toDto(Users user);
     public abstract List<UsersDTO> toDTO (Collection<Users> users);
 }

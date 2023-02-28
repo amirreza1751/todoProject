@@ -11,10 +11,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public abstract class TodoMapper {
 
-     public abstract TodoDTO toTodoDTO(Todo todo);
-     public abstract Todo toTodo(TodoDTO dto);
+     public abstract TodoDTO toDTO(Todo todo);
 
-     public abstract List<TodoDTO> toTodoDTO (Collection<Todo> todos);
+     public abstract List<TodoDTO> toDTO (Collection<Todo> todos);
 
-     public abstract Todo toTodo(TodoInsertDTO todoInsertDTO);
+     public abstract Todo toEntity(TodoDTO todoDTO);
 }

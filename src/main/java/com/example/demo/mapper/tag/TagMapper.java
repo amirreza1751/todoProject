@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class TagMapper {
-    public abstract Tag toUsers(TagDTO tagDTO);
+    public abstract Tag toEnity(TagDTO tagDTO);
     public abstract TagDTO toDto(Tag tag);
     public abstract List<TagDTO> toDTO (Collection<Tag> tags);
 }
