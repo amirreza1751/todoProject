@@ -9,6 +9,5 @@ import java.util.Set;
 public class UsersDTO {
     Long Id;
     String name;
-
     Set<TodoDTO> todoSet;
 }

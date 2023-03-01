@@ -12,6 +12,7 @@ public class TodoDTO {
     Long id;
     String title;
     String description;
+    String owner;
     TodoStatus todoStatus;
     Set<TagDTO> tagSet;
 }
