@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.model.Tag;
+import com.example.demo.model.exception.NoSuchEntityExistsException;
 import com.example.demo.repositories.TagRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,9 @@ public class TagServiceImpl implements GenericService<Tag> {
 
     @Override
     public Tag getEntityById(Long id) {
-        return tagRepository.findById(id).get();
+        return tagRepository.findById(id).orElseThrow(
+                () -> new NoSuchEntityExistsException(Tag.class.getSimpleName(), id)
+        );
     }
 
     @Override
@@ -34,14 +37,17 @@ public class TagServiceImpl implements GenericService<Tag> {
 
     @Override
     public void updateEntity(Long id, Tag tag) {
-        Tag tagFromDb = tagRepository.findById(id).get();
-        System.out.println(tagFromDb);
+        Tag tagFromDb = tagRepository.findById(id).orElse(null);
+        if (tagFromDb == null) throw new NoSuchEntityExistsException(Tag.class.getSimpleName(), id);
         tagFromDb.setName(tag.getName());
         tagRepository.save(tagFromDb);
     }
 
     @Override
     public void deleteEntity(Long tagId) {
+        if (tagId == null) throw new NoSuchEntityExistsException(Tag.class.getSimpleName(), null);
+        Tag tagFromDb = tagRepository.findById(tagId).orElse(null);
+        if (tagFromDb == null) throw new NoSuchEntityExistsException(Tag.class.getSimpleName(), tagId);
         tagRepository.deleteById(tagId);
     }
 

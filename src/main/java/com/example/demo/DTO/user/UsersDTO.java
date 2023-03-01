@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Data
 public class UsersDTO {
-    Long Id;
+    Long id;
     String name;
     Set<TodoDTO> todoSet;
 }

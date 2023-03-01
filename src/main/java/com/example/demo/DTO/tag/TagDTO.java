@@ -6,6 +6,6 @@ import java.util.Set;
 
 @Data
 public class TagDTO {
-    Long Id;
+    Long id;
     String name;
 }

@@ -2,10 +2,12 @@ package com.example.demo.services;
 
 import com.example.demo.model.Tag;
 import com.example.demo.model.Todo;
+import com.example.demo.model.exception.NoSuchEntityExistsException;
 import com.example.demo.repositories.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -27,7 +29,9 @@ public class TodoServiceImpl implements GenericService<Todo> {
 
     @Override
     public Todo getEntityById(Long id) {
-        return todoRepository.findById(id).get();
+        return todoRepository.findById(id).orElseThrow(
+                () -> new NoSuchEntityExistsException(Todo.class.getSimpleName(), id)
+        );
     }
 
     @Override
@@ -37,8 +41,8 @@ public class TodoServiceImpl implements GenericService<Todo> {
 
     @Override
     public void updateEntity(Long id, Todo todo) {
-        Todo todoFromDb = todoRepository.findById(id).get();
-        System.out.println(todoFromDb.toString());
+        Todo todoFromDb = todoRepository.findById(id).orElse(null);
+        if (todoFromDb == null) throw new NoSuchEntityExistsException(Todo.class.getSimpleName(), id);
         todoFromDb.setTodoStatus(todo.getTodoStatus());
         todoFromDb.setDescription(todo.getDescription());
         todoFromDb.setTitle(todo.getTitle());
@@ -47,7 +51,10 @@ public class TodoServiceImpl implements GenericService<Todo> {
 
     @Override
     public void deleteEntity(Long todoId) {
-        todoRepository.deleteById(todoId);
+        if (todoId == null) throw new NoSuchEntityExistsException(Todo.class.getSimpleName(), null);
+        Todo todoFromDb = todoRepository.findById(todoId).orElse(null);
+        if (todoFromDb == null) throw new NoSuchEntityExistsException(Todo.class.getSimpleName(), todoId);
+        else todoRepository.deleteById(todoId);
     }
 
     public ArrayList<Todo> findAllById(Long[] ids){
@@ -61,28 +68,20 @@ public class TodoServiceImpl implements GenericService<Todo> {
     public Todo assignTags(Long todoId, Long[] tagIds){
         Todo todo = getEntityById(todoId);
         ArrayList<Tag> tags = tagService.findAllById(tagIds);
-        if (tags.size()!= 0){
-            tags.forEach(tag -> {
-                tag.getTodoSet().add(todo);
-            });
-            todo.getTagSet().addAll(tags);
-            tagService.saveAll(tags);
-            return todoRepository.save(todo);
-        }
-        return todo;
+        if (tags.size()== 0) throw new NoSuchEntityExistsException(Tag.class.getSimpleName(), Arrays.toString(tagIds));
+        tags.forEach(tag -> tag.getTodoSet().add(todo));
+        todo.getTagSet().addAll(tags);
+        tagService.saveAll(tags);
+        return todoRepository.save(todo);
     }
 
     public Todo removeTags(Long todoId, Long[] tagIds){
         Todo todo = getEntityById(todoId);
         ArrayList<Tag> tags = tagService.findAllById(tagIds);
-        if (tags.size()!= 0){
-            todo.getTagSet().removeAll(tags);
-            tags.forEach(tag -> {
-                tag.getTodoSet().remove(todo);
-            });
-            tagService.saveAll(tags);
-            return todoRepository.save(todo);
-        }
-        return todo;
+        if (tags.size()== 0) throw new NoSuchEntityExistsException(Tag.class.getSimpleName(), Arrays.toString(tagIds));
+        todo.getTagSet().removeAll(tags);
+        tags.forEach(tag -> tag.getTodoSet().remove(todo));
+        tagService.saveAll(tags);
+        return todoRepository.save(todo);
     }
 }

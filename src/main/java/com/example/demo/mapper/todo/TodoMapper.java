@@ -1,6 +1,5 @@
 package com.example.demo.mapper.todo;
 
-import com.example.demo.DTO.todo.TodoInsertDTO;
 import com.example.demo.DTO.todo.TodoDTO;
 import com.example.demo.model.Todo;
 import org.mapstruct.AfterMapping;
@@ -21,9 +20,9 @@ public abstract class TodoMapper {
 
      @AfterMapping
      protected void addOwnerNameToTodoDTO(Todo todo, @MappingTarget TodoDTO todoDTO){
-          if (todo.getUser() != null){
-               todoDTO.setOwner(todo.getUser().getName());
-          }
+          if (todo.getUser() == null)
+               return;
+          todoDTO.setOwner(todo.getUser().getName());
      }
 
 }
