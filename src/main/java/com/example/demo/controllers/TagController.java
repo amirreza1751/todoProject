@@ -1,11 +1,8 @@
 package com.example.demo.controllers;
 
 import com.example.demo.DTO.tag.TagDTO;
-import com.example.demo.DTO.user.UsersDTO;
 import com.example.demo.mapper.tag.TagMapper;
-import com.example.demo.mapper.user.UsersMapper;
 import com.example.demo.model.Tag;
-import com.example.demo.model.Users;
 import com.example.demo.services.TagServiceImpl;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpHeaders;

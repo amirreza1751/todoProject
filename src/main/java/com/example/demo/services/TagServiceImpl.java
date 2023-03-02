@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.model.Tag;
 import com.example.demo.model.exception.NoSuchEntityExistsException;
+import com.example.demo.model.exception.OperationNotPermittedException;
 import com.example.demo.repositories.TagRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Service
 public class TagServiceImpl implements GenericService<Tag> {
-    TagRepository tagRepository;
+    private final TagRepository tagRepository;
 
     public TagServiceImpl(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
@@ -48,6 +49,7 @@ public class TagServiceImpl implements GenericService<Tag> {
         if (tagId == null) throw new NoSuchEntityExistsException(Tag.class.getSimpleName(), null);
         Tag tagFromDb = tagRepository.findById(tagId).orElse(null);
         if (tagFromDb == null) throw new NoSuchEntityExistsException(Tag.class.getSimpleName(), tagId);
+        if (tagFromDb.getTodoSet().size() != 0) throw new OperationNotPermittedException(Tag.class.getSimpleName(), tagId);
         tagRepository.deleteById(tagId);
     }
 

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class UsersServiceImpl implements GenericService<Users> {
@@ -58,7 +59,11 @@ public class UsersServiceImpl implements GenericService<Users> {
         else{
             Users userFromDb = usersRepository.findById(userId).orElse(null);
             if (userFromDb == null) throw new NoSuchEntityExistsException(Users.class.getSimpleName(), userId);
-            else usersRepository.deleteById(userId);
+            else {
+                Long[] todoIdsToRemove = userFromDb.getTodoSet().stream().map(Todo::getId).collect(Collectors.toSet()).toArray(new Long[0]);
+                removeTodos(userId, todoIdsToRemove);
+                usersRepository.deleteById(userId);
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TodoServiceImpl implements GenericService<Todo> {
@@ -54,7 +55,11 @@ public class TodoServiceImpl implements GenericService<Todo> {
         if (todoId == null) throw new NoSuchEntityExistsException(Todo.class.getSimpleName(), null);
         Todo todoFromDb = todoRepository.findById(todoId).orElse(null);
         if (todoFromDb == null) throw new NoSuchEntityExistsException(Todo.class.getSimpleName(), todoId);
-        else todoRepository.deleteById(todoId);
+        else{
+            Long[] tagIdsToRemove = todoFromDb.getTagSet().stream().map(Tag::getId).collect(Collectors.toSet()).toArray(new Long[0]);
+            removeTags(todoId, tagIdsToRemove);
+            todoRepository.deleteById(todoId);
+        }
     }
 
     public ArrayList<Todo> findAllById(Long[] ids){

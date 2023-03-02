@@ -6,6 +6,7 @@ import com.example.demo.mapper.todo.TodoMapper;
 import com.example.demo.model.Todo;
 import com.example.demo.services.TodoServiceImpl;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/todo")
 public class TodoController {
-    private final TodoServiceImpl todoService;
+    @Autowired
+    private TodoServiceImpl todoService;
     private final TodoMapper mapper;
 
-    public TodoController(TodoServiceImpl todoService) {
-        this.todoService = todoService;
+    public TodoController() {
         this.mapper = Mappers.getMapper(TodoMapper.class);
     }
 
