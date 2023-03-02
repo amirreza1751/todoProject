@@ -94,4 +94,8 @@ public class UsersServiceImpl extends GenericService<Users> {
         });
         return usersRepository.save(user);
     }
+
+    public void tessst(){
+        
+    }
 }
