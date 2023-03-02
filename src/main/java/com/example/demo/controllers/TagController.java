@@ -5,6 +5,7 @@ import com.example.demo.mapper.tag.TagMapper;
 import com.example.demo.model.Tag;
 import com.example.demo.services.TagServiceImpl;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,12 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TagDTO>> getAllTags() {
-        List<Tag> tags = tagService.getEntities();
-        return new ResponseEntity<>(mapper.toDTO(tags), HttpStatus.OK);
+    public ResponseEntity<Page<TagDTO>> getAllTags(@RequestParam(defaultValue = "0") int pageNo,
+                                                   @RequestParam(defaultValue = "25") int pageSize,
+                                                   @RequestParam(required = false) String sortBy,
+                                                   @RequestParam(required = false) String sortDir) {
+        return new ResponseEntity<>(tagService.getEntities(pageNo, pageSize, sortBy, sortDir).map(tag -> mapper.toDto(tag)),
+                HttpStatus.OK);
     }
     @GetMapping({"/{tagId}"})
     public ResponseEntity<TagDTO> getTag(@PathVariable Long tagId) {

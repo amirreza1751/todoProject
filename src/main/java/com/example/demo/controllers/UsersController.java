@@ -5,6 +5,7 @@ import com.example.demo.mapper.user.UsersMapper;
 import com.example.demo.model.Users;
 import com.example.demo.services.UsersServiceImpl;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,13 @@ public class UsersController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UsersDTO>> getAllUsers() {
-        List<Users> users = usersService.getEntities();
-        return new ResponseEntity<>(mapper.toDTO(users), HttpStatus.OK);
+    public ResponseEntity<Page<UsersDTO>> getAllUsers(@RequestParam(defaultValue = "0") int pageNo,
+                                                      @RequestParam(defaultValue = "25") int pageSize,
+                                                      @RequestParam(required = false) String sortBy,
+                                                      @RequestParam(required = false) String sortDir)
+    {
+        return new ResponseEntity<>(usersService.getEntities(pageNo, pageSize, sortBy, sortDir).map(user -> mapper.toDto(user)),
+                HttpStatus.OK);
     }
     @GetMapping({"/{userId}"})
     public ResponseEntity<UsersDTO> getUser(@PathVariable Long userId) {

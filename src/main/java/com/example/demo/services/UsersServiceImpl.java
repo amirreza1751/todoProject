@@ -5,17 +5,16 @@ import com.example.demo.model.Users;
 import com.example.demo.model.exception.NoSuchEntityExistsException;
 import com.example.demo.model.exception.OperationNotPermittedException;
 import com.example.demo.repositories.UsersRepository;
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class UsersServiceImpl implements GenericService<Users> {
+public class UsersServiceImpl extends GenericService<Users> {
     private final UsersRepository usersRepository;
     private final TodoServiceImpl todoService;
 
@@ -25,11 +24,11 @@ public class UsersServiceImpl implements GenericService<Users> {
     }
 
     @Override
-    public List<Users> getEntities() {
-        List<Users> users = new ArrayList<>();
-        usersRepository.findAll().forEach(users::add);
-        return users;
+    public Page<Users> getEntities(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Pageable page = getSortingPageable(pageNo, pageSize, sortBy, sortDir);
+        return usersRepository.findAll(page);
     }
+
 
     @Override
     public Users getEntityById(Long id) {

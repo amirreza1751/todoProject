@@ -4,13 +4,15 @@ import com.example.demo.model.Tag;
 import com.example.demo.model.exception.NoSuchEntityExistsException;
 import com.example.demo.model.exception.OperationNotPermittedException;
 import com.example.demo.repositories.TagRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TagServiceImpl implements GenericService<Tag> {
+public class TagServiceImpl extends GenericService<Tag> {
     private final TagRepository tagRepository;
 
     public TagServiceImpl(TagRepository tagRepository) {
@@ -18,10 +20,9 @@ public class TagServiceImpl implements GenericService<Tag> {
     }
 
     @Override
-    public List<Tag> getEntities() {
-        List<Tag> tags = new ArrayList<>();
-        tagRepository.findAll().forEach(tags::add);
-        return tags;
+    public Page<Tag> getEntities(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Pageable page = getSortingPageable(pageNo, pageSize, sortBy, sortDir);
+        return tagRepository.findAll(page);
     }
 
     @Override

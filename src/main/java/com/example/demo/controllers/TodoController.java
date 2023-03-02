@@ -1,34 +1,34 @@
 package com.example.demo.controllers;
 
 import com.example.demo.DTO.todo.TodoDTO;
-import com.example.demo.DTO.user.UsersDTO;
 import com.example.demo.mapper.todo.TodoMapper;
 import com.example.demo.model.Todo;
 import com.example.demo.services.TodoServiceImpl;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/todo")
 public class TodoController {
-    @Autowired
-    private TodoServiceImpl todoService;
+    private final TodoServiceImpl todoService;
     private final TodoMapper mapper;
 
-    public TodoController() {
+    public TodoController(TodoServiceImpl todoService) {
+        this.todoService = todoService;
         this.mapper = Mappers.getMapper(TodoMapper.class);
     }
 
     @GetMapping
-    public ResponseEntity<List<TodoDTO>> getAllTodos() {
-        List<Todo> todos = todoService.getEntities();
-        return new ResponseEntity<>(mapper.toDTO(todos), HttpStatus.OK);
+    public ResponseEntity<Page<TodoDTO>> getAllTodos(@RequestParam(defaultValue = "0") int pageNo,
+                                                     @RequestParam(defaultValue = "25") int pageSize,
+                                                     @RequestParam(required = false) String sortBy,
+                                                     @RequestParam(required = false) String sortDir) {
+        return new ResponseEntity<>(todoService.getEntities(pageNo, pageSize, sortBy, sortDir).map(todo -> mapper.toDTO(todo)),
+                HttpStatus.OK);
     }
     @GetMapping({"/{todoId}"})
     public ResponseEntity<TodoDTO> getTodo(@PathVariable Long todoId) {

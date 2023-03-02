@@ -4,6 +4,8 @@ import com.example.demo.model.Tag;
 import com.example.demo.model.Todo;
 import com.example.demo.model.exception.NoSuchEntityExistsException;
 import com.example.demo.repositories.TodoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TodoServiceImpl implements GenericService<Todo> {
+public class TodoServiceImpl extends GenericService<Todo> {
     private final TodoRepository todoRepository;
     private final TagServiceImpl tagService;
 
@@ -22,10 +24,9 @@ public class TodoServiceImpl implements GenericService<Todo> {
     }
 
     @Override
-    public List<Todo> getEntities() {
-        List<Todo> todos = new ArrayList<>();
-        todoRepository.findAll().forEach(todos::add);
-        return todos;
+    public Page<Todo> getEntities(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Pageable page = getSortingPageable(pageNo, pageSize, sortBy, sortDir);
+        return todoRepository.findAll(page);
     }
 
     @Override
